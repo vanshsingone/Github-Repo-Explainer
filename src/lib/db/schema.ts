@@ -1,7 +1,7 @@
-import { integer, text, timestamp, pgTable, jsonb } from "drizzle-orm/pg-core";
+import { integer, text, timestamp, pgTable, serial } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
-  id: integer().primaryKey(),
+  id: serial().primaryKey(),
   clerkId: text().notNull().unique(),
   email: text().notNull(),
   tier: text().default("free"),
@@ -9,7 +9,7 @@ export const users = pgTable("users", {
 });
 
 export const repos = pgTable("repos", {
-  id: integer().primaryKey(),
+  id: serial().primaryKey(),
   userId: integer().notNull(),
   owner: text().notNull(),
   name: text().notNull(),
@@ -20,8 +20,18 @@ export const repos = pgTable("repos", {
   createdAt: timestamp().defaultNow().notNull(),
 });
 
+export const files = pgTable("files", {
+  id: serial().primaryKey(),
+  repoId: integer().notNull(),
+  path: text().notNull(),
+  content: text().notNull(),
+  sha: text().notNull(),
+  size: integer().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+});
+
 export const indexingJobs = pgTable("indexing_jobs", {
-  id: integer().primaryKey(),
+  id: serial().primaryKey(),
   repoId: integer().notNull(),
   status: text().notNull(),
   progress: integer().default(0),
@@ -32,7 +42,7 @@ export const indexingJobs = pgTable("indexing_jobs", {
 });
 
 export const chunks = pgTable("chunks", {
-  id: integer().primaryKey(),
+  id: serial().primaryKey(),
   repoId: integer().notNull(),
   filePath: text().notNull(),
   startLine: integer().notNull(),
@@ -46,17 +56,17 @@ export const chunks = pgTable("chunks", {
 });
 
 export const chatSessions = pgTable("chat_sessions", {
-  id: integer().primaryKey(),
+  id: serial().primaryKey(),
   userId: integer().notNull(),
   repoId: integer().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
 });
 
 export const chatMessages = pgTable("chat_messages", {
-  id: integer().primaryKey(),
+  id: serial().primaryKey(),
   sessionId: integer().notNull(),
   role: text().notNull(),
   content: text().notNull(),
-  citations: jsonb(),
+  citations: text(),
   createdAt: timestamp().defaultNow().notNull(),
 });
